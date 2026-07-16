@@ -1,1 +1,606 @@
-# sanshoku
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西条農業高校 まごころ野菜直売所</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e9;
+            --accent-color: #81c784;
+            --text-color: #2e3d30;
+            --bg-color: #f1f8f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: radial-gradient(#dcedc8 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        header {
+            background: linear-gradient(rgba(46, 125, 50, 0.85), rgba(46, 125, 50, 0.95)), 
+                        url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=1200') no-repeat center/cover;
+            color: white;
+            text-align: center;
+            padding: 5rem 1rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .intro-box {
+            background: white;
+            border-left: 8px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        /* 野菜グリッド */
+        .veggie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .veggie-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .veggie-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .veggie-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .veggie-info {
+            padding: 1.5rem;
+        }
+
+        .veggie-name {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .veggie-nutrition {
+            font-size: 0.9rem;
+            background: var(--primary-light);
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .veggie-nutrition strong {
+            color: #1b5e20;
+        }
+
+        .recipe-btn {
+            display: block;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .recipe-btn:hover {
+            background-color: #1b5e20;
+        }
+
+        /* コメントエリア */
+        .comment-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-top: 6px solid var(--primary-color);
+        }
+
+        /* 警告メッセージ用スタイル */
+        .config-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            background-color: #f57c00;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #e65100;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .comment-item {
+            padding: 1rem;
+            border-bottom: 1px dashed #ccc;
+            background: #fafafa;
+            border-radius: 6px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-user {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .comment-text {
+            white-space: pre-wrap;
+            margin-bottom: 0.8rem;
+        }
+
+        .comment-img {
+            max-width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 6px;
+            display: block;
+            margin-top: 0.5rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .veggie-grid { grid-template-columns: 1fr; }
+        }
+        </style>
+        </head>
+        <body>
+
+        <header>
+        <h1>西条農業高校 まごころ野菜直売所</h1>
+        <p>石鎚山の豊かな名水と大自然に囲まれた愛媛県西条市で、私たちが一玉一玉愛情を込めて育てています！</p>
+        </header>
+
+        <div class="container">
+        
+        <div class="intro-box">
+            「地域の皆様に、笑顔と健康を届けたい。お値段を安く、品質の良いものを販売出来るように心がけています！」
+        </div>
+
+        <h2 class="section-title">自慢の美味しい野菜たち</h2>
+        
+        <div class="veggie-grid">
+            <!-- ピーマン -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=500" alt="ピーマン" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🫑 ピーマン</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> ビタミンCがレモンの約1.5倍！加熱しても壊れにくく、美肌効果や夏バテ予防に最適です。
+                    </div>
+                    <a href="https://cookpad.com/search/%E3%83%94%E3%83%BC%E3%83%9E%E3%83%B3" target="_blank" rel="noopener noreferrer" class="recipe-btn">ピーマンのおすすめ料理を見る</a>
+                </div>
+            </div>
+
+            <!-- トマト -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&q=80&w=500" alt="トマト" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🍅 トマト</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> 抗酸化作用の強い「リコピン」が豊富。生活習慣病の予防や、紫外線によるダメージをケアします。
+                    </div>
+                    <a href="https://cookpad.com/search/%E3%83%88%E3%83%9E%E3%83%88" target="_blank" rel="noopener noreferrer" class="recipe-btn">トマトのおすすめ料理を見る</a>
+                </div>
+            </div>
+
+            <!-- きゅうり -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?auto=format&fit=crop&q=80&w=500" alt="きゅうり" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🥒 きゅうり</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> カリウムが豊富で、体内の余分な水分や塩分を排出し、むくみの解消や体を優しく冷やす効果があります。
+                    </div>
+                    <a href="https://cookpad.com/search/%E3%81%8D%E3%83%85%E3%81%86%E3%82%8A" target="_blank" rel="noopener noreferrer" class="recipe-btn">きゅうりのおすすめ料理を見る</a>
+                </div>
+            </div>
+
+            <!-- なす -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1628556209787-8e6d2319ec4d?auto=format&fit=crop&q=80&w=500" alt="なす" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🍆 なす</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> 皮に含まれるポリフェノール「ナスニン」には、強い抗酸化作用があり、目の疲労緩和や血管をきれいに保つ効果があります。
+                    </div>
+                    <a href="https://cookpad.com/search/%E3%81%AA%E3%81%99" target="_blank" rel="noopener noreferrer" class="recipe-btn">なすのおすすめ料理を見る</a>
+                </div>
+            </div>
+
+            <!-- 枝豆 -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1615485925821-4fa9732f10b7?auto=format&fit=crop&q=80&w=500" alt="枝豆" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🌱 枝豆</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> タンパク質とビタミンB1が豊富。疲労回復効果が高く、スタミナ補給やビールのお供にも最高です。
+                    </div>
+                    <a href="https://cookpad.com/search/%E6%9E%9D%E8%B1%86" target="_blank" rel="noopener noreferrer" class="recipe-btn">枝豆のおすすめ料理を見る</a>
+                </div>
+            </div>
+
+            <!-- 大葉 -->
+            <div class="veggie-card">
+                <img src="https://images.unsplash.com/photo-1628556208077-49f3909772c9?auto=format&fit=crop&q=80&w=500" alt="大葉" class="veggie-img">
+                <div class="veggie-info">
+                    <h3 class="veggie-name">🍃 大葉（しそ）</h3>
+                    <div class="veggie-nutrition">
+                        <strong>栄養・効能：</strong> β-カロテンやビタミンEがトップクラス。特有の香り成分「ペリルアルデヒド」には強い防腐・抗菌作用や食欲増進効果があります。
+                    </div>
+                    <a href="https://cookpad.com/search/%E5%A4%A7%E8%91%89" target="_blank" rel="noopener noreferrer" class="recipe-btn">大葉のおすすめ料理を見る</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- コメント・写真投稿エリア -->
+        <section class="comment-section">
+            <h2 class="section-title">購入者レビュー＆手料理ギャラリー</h2>
+            
+            <!-- Firebase未設定時に表示される案内枠 -->
+            <div id="setupWarning" class="config-warning" style="display: none;">
+                <strong>⚠️ Firebaseの設定（Config）が完了していません</strong><br>
+                HTMLコードの下部にある <code>firebaseConfig</code> の値を、ご自身のFirebaseプロジェクトのデータに書き換えると、このコメント機能が有効になります。現在は仮データでの表示デモ状態です。
+            </div>
+
+            <form id="commentForm" class="comment-form">
+                <div class="form-group">
+                    <label for="userName">お名前（ニックネーム）</label>
+                    <input type="text" id="userName" placeholder="例：農家応援隊" required>
+                </div>
+                <div class="form-group">
+                    <label for="commentContent">購入した感想や料理のポイント</label>
+                    <textarea id="commentContent" placeholder="例：ピーマンがとても肉厚で甘く、子どもが喜んでチンジャオロースにして食べました！" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="imageFile">料理や野菜の画像（任意）</label>
+                    <input type="file" id="imageFile" accept="image/*">
+                </div>
+                <button type="submit" id="submitBtn" class="submit-btn">感想を投稿する</button>
+            </form>
+
+            <div id="commentList" class="comment-list">
+                <!-- 投稿コメント一覧 -->
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 愛媛県立西条農業高等学校 園芸科学科 All Rights Reserved.</p>
+    </footer>
+
+    <!-- Firebase SDKの読み込み (v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // 【ここに自分のconfigを貼る】
+        const firebaseConfig = {
+        apiKey: "AIzaSyBA27aH0abDXDbeIJPwqQTCf1QTOVc_VAc",
+        authDomain: "sanchoku-c9acc.firebaseapp.com",
+        projectId: "sanchoku-c9acc",
+        storageBucket: "sanchoku-c9acc.firebasestorage.app",
+        messagingSenderId: "250595490879",
+        appId: "1:250595490879:web:30f47c4a631c7550454c8a"
+        };
+
+        const warningDiv = document.getElementById('setupWarning');
+        const commentForm = document.getElementById('commentForm');
+        const commentList = document.getElementById('commentList');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // 仮のデモデータ（Firebase未設定時に表示）
+        const demoComments = [
+            {
+                name: "西条トマト大好き",
+                content: "トマトがとってもジューシーで甘くて驚きました！スライスしてシンプルに塩とオリーブオイルだけでごちそうになりました。また絶対買います！",
+                createdAt: { toDate: () => new Date() }
+            },
+            {
+                name: "料理パパ",
+                content: "ピーマンを肉詰めにしました。肉厚でピーマンの苦味が少なく、普段野菜を嫌がる子供たちも「美味しい！」とおかわりしてくれました。高品質で安くて助かります！",
+                createdAt: { toDate: () => new Date(Date.now() - 86400000) }
+            }
+        ];
+
+        let db = null;
+        let isFirebaseActive = false;
+
+        // Firebaseの初期化テスト
+        if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                isFirebaseActive = true;
+            } catch (e) {
+                console.error("Firebaseの初期化に失敗しました。設定を確認してください:", e);
+                warningDiv.style.display = "block";
+                warningDiv.textContent = "⚠️ Firebaseの初期化中にエラーが発生しました。Configの値が正しいか確認してください。";
+            }
+        } else {
+            // 未設定の場合は警告を表示し、デモモードに移行
+            warningDiv.style.display = "block";
+        }
+
+        // コメントを表示する関数
+        async function loadComments() {
+            commentList.innerHTML = '';
+            
+            if (isFirebaseActive && db) {
+                try {
+                    const q = query(collection(db, "comments"), orderBy("createdAt", "desc"));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) {
+                        const noComment = document.createElement('p');
+                        noComment.style.textAlign = 'center';
+                        noComment.style.color = '#777';
+                        noComment.textContent = 'まだ感想がありません。最初のレビューを投稿してみませんか？';
+                        commentList.appendChild(noComment);
+                        return;
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        renderCommentRow(doc.data());
+                    });
+                } catch (error) {
+                    console.error("データ取得エラー: ", error);
+                    warningDiv.style.display = "block";
+                    warningDiv.textContent = "⚠️ データベースからデータを取得できませんでした。Firestoreのセキュリティルールがテストモード（全員許可）になっているか確認してください。";
+                    loadDemoComments();
+                }
+            } else {
+                loadDemoComments();
+            }
+        }
+
+        // デモ用コメントを読み込む
+        function loadDemoComments() {
+            demoComments.forEach(data => renderCommentRow(data));
+        }
+
+        // 1件分のコメントをHTMLに構築して追加する関数（安全対策でtextContentを使用）
+        function renderCommentRow(data) {
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            
+            const header = document.createElement('div');
+            header.className = 'comment-header';
+            
+            const userSpan = document.createElement('span');
+            userSpan.className = 'comment-user';
+            userSpan.textContent = data.name; // ユーザー入力を安全に表示
+            
+            const dateSpan = document.createElement('span');
+            if (data.createdAt) {
+                try {
+                    const date = data.createdAt.toDate();
+                    dateSpan.textContent = date.toLocaleString('ja-JP');
+                } catch (e) {
+                    dateSpan.textContent = '投稿済み';
+                }
+            } else {
+                dateSpan.textContent = 'ただいま投稿中...';
+            }
+            
+            header.appendChild(userSpan);
+            header.appendChild(dateSpan);
+            
+            const textP = document.createElement('p');
+            textP.className = 'comment-text';
+            textP.textContent = data.content; // ユーザー入力を安全に表示
+            
+            item.appendChild(header);
+            item.appendChild(textP);
+            
+            if (data.image) {
+                const img = document.createElement('img');
+                img.className = 'comment-img';
+                img.src = data.image; // アップロードされた画像データ（Base64）
+                img.alt = '購入者の投稿画像';
+                item.appendChild(img);
+            }
+            
+            commentList.appendChild(item);
+        }
+
+        // 画像ファイルをBase64に変換するヘルパー
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // フォーム送信時のイベント処理
+        commentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('userName');
+            const contentInput = document.getElementById('commentContent');
+            const fileInput = document.getElementById('imageFile');
+            
+            if (!isFirebaseActive || !db) {
+                alert("現在は「デモモード」です。Firebaseの設定（Config）を書き換えることで、実際に投稿を保存できるようになります！");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "送信中...";
+            
+            let base64Image = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                try {
+                    base64Image = await convertFileToBase64(file);
+                } catch (err) {
+                    console.error("画像の読み込み失敗:", err);
+                    alert("画像の読み込みに失敗しました。");
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "感想を投稿する";
+                    return;
+                }
+            }
+            
+            try {
+                // collection(db, "comments") にデータを addDoc で追加
+                await addDoc(collection(db, "comments"), {
+                    name: nameInput.value,
+                    content: contentInput.value,
+                    image: base64Image,
+                    createdAt: serverTimestamp()
+                });
+                
+                commentForm.reset();
+                await loadComments();
+            } catch (error) {
+                console.error("投稿中にエラーが発生しました: ", error);
+                alert("投稿できませんでした。Firestoreの「ルール（Rules）」が読み書きを許可する設定になっているか確認してください。");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "感想を投稿する";
+            }
+        });
+
+        // 読み込み開始
+        loadComments();
+    </script>
+</body>
+</html>
